@@ -1,0 +1,49 @@
+#VRML_SIM R2021a utf8
+WorldInfo {
+  basicTimeStep 8
+  coordinateSystem "NUE"
+  contactProperties [
+    ContactProperties {
+      material1 "InteriorWheelMat"
+      coulombFriction [
+        1.8, 0, 0.2
+      ]
+      frictionRotation -0.9648 0
+      bounce 0
+      forceDependentSlip [
+        10, 0
+      ]
+    }
+    ContactProperties {
+      material1 "ExteriorWheelMat"
+      coulombFriction [
+        1.8, 0, 0.2
+      ]
+      frictionRotation 0.9648 0
+      bounce 0
+      forceDependentSlip [
+        10, 0
+      ]
+    }
+  ]
+}
+Viewpoint {
+  orientation -0.9884886207025974 0.13993432930920446 0.057520693861079886 0.788176185934104
+  position 0.2507716709524132 2.993877953841152 2.730219738293032
+  follow "robot"
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+Floor {
+}
+MecanumPlatform {
+  controller "<extern>"
+  bodySlot [
+    InertialUnit {
+    }
+    Gyro {
+    }
+  ]
+}

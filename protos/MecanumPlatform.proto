@@ -1,0 +1,108 @@
+#VRML_SIM R2021a utf8
+# license: Copyright Cyberbotics Ltd. Licensed for use only with Webots.
+# tags: static
+
+PROTO MecanumPlatform [
+  field SFVec3f           translation     0 0.12 0      # Is `Transform.translation`.
+  field SFRotation        rotation        1 0 0 -1.5708 # Is `Transform.rotation`.
+  field SFString          name            "robot"       # Is `Solid.name`.
+  field SFString          controller      "void"        # Is `Robot.controller`.
+  field MFString          controllerArgs  []            # Is `Robot.controllerArgs`.
+  field SFString          customData      ""            # Is `Robot.customData`.
+  field SFBool            supervisor      FALSE         # Is `Robot.supervisor`.
+  field SFBool            synchronization TRUE          # Is `Robot.synchronization`.
+  field MFNode            bodySlot        []            # Extends the robot with new nodes in the body slot.
+]
+{
+Robot {
+  translation IS translation
+  rotation IS rotation
+  customData IS customData
+  supervisor IS supervisor
+  synchronization IS synchronization
+  name IS name
+  model "Mecanum Platform"
+  children [
+    Transform {
+      translation 0 0 -0.045
+      children [
+        Shape {
+          appearance BlackAppearance {
+          }
+          geometry Box {
+            size 0.34 0.34 0.09
+          }
+        }
+        Shape {
+          appearance BlackAppearance {
+          }
+          geometry Box {
+            size 0.56 0.23 0.09
+          }
+        }
+      ]
+    }
+    Group {
+      children IS bodySlot
+    }
+    DEF WHEEL1 InteriorWheel {
+      translation 0.228 -0.158 -0.055
+      anchor 0.228 -0.158 -0.055
+      name "wheel1"
+      sensorName "wheel1sensor"
+    }
+    DEF WHEEL2 ExteriorWheel {
+      translation 0.228 0.158 -0.055
+      anchor 0.228 0.158 -0.055
+      name "wheel2"
+      sensorName "wheel2sensor"
+    }
+    DEF WHEEL3 InteriorWheel {
+      translation -0.228 0.158 -0.055
+      anchor -0.228 0.158 -0.055
+      name "wheel3"
+      sensorName "wheel3sensor"
+    }
+    DEF WHEEL4 ExteriorWheel {
+      translation -0.228 -0.158 -0.055
+      anchor -0.228 -0.158 -0.055
+      name "wheel4"
+      sensorName "wheel4sensor"
+    }
+  ]
+  description "Mecanum Platform"
+  boundingObject Group {
+    children [
+      Transform {
+        translation 0 0 -0.045
+        children [
+          Box {
+            size 0.34 0.34 0.09
+          }
+        ]
+      }
+      Transform {
+        translation 0 0 -0.045
+        children [
+          Box {
+            size 0.56 0.23 0.09
+          }
+        ]
+      }
+    ]
+  }
+  physics Physics {
+    density -1
+    mass 22
+    centerOfMass [
+      0 0 -0.045
+    ]
+    inertiaMatrix [
+      0.166204 0.418086 0.55459
+      0 0 0
+    ]
+  }
+  controller IS controller
+  controllerArgs IS controllerArgs
+}
+}

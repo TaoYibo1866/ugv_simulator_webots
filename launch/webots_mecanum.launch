@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+  <param name="/use_sim_time" value="true"/>
+  <include file="$(find webots_ros)/launch/webots.launch">
+    <arg name="mode" value="realtime"/>
+    <arg name="no_gui" value="false"/>
+    <arg name="world" value="$(find mecanum_simulator)/worlds/mecanum.wbt"/>
+  </include>
+
+  <env name="LD_LIBRARY_PATH" value="$(env LD_LIBRARY_PATH):$(env WEBOTS_HOME)/lib/controller"/>
+  <env name="PYTHONPATH" value="$(env PYTHONPATH):$(env WEBOTS_HOME)/lib/controller/python27" unless="$(eval '1' if env('ROS_DISTRO') == 'noetic' else '0')" />
+  <env name="PYTHONPATH" value="$(env PYTHONPATH):$(env WEBOTS_HOME)/lib/controller/python38" if="$(eval '1' if env('ROS_DISTRO') == 'noetic' else '0')" />
+  <node name="webots_mecanum" pkg="mecanum_simulator" type="webots_mecanum_node.py" output="screen" required="true"/>
+  <node name="joy" pkg="joy" type="joy_node" output="screen"/>
+  <node name="joy_control" pkg="mecanum_simulator" type="joy_control_node" output="screen"/>
+  <node name="odometry" pkg="mecanum_simulator" type="odometry_node" output="screen"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find mecanum_simulator)/rviz/default.rviz"/>
+</launch>
