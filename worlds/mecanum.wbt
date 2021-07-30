@@ -1,6 +1,6 @@
 #VRML_SIM R2021a utf8
 WorldInfo {
-  basicTimeStep 8
+  basicTimeStep 16
   coordinateSystem "NUE"
   contactProperties [
     ContactProperties {
@@ -28,22 +28,71 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.9884886207025974 0.13993432930920446 0.057520693861079886 0.788176185934104
-  position 0.2507716709524132 2.993877953841152 2.730219738293032
+  orientation -0.2570112531709651 -0.9313962999724579 -0.2577715037414052 1.6447529144060096
+  position -5.351075125759433 3.2501623065527783 -0.02933607744903308
   follow "robot"
 }
 TexturedBackground {
 }
 TexturedBackgroundLight {
 }
-Floor {
+RectangleArena {
+  floorSize 5 5
+  wallHeight 0.5
 }
-MecanumPlatform {
+Mecanum {
   controller "<extern>"
   bodySlot [
     InertialUnit {
     }
     Gyro {
     }
+    Lidar {
+      translation 0 0 0.03
+      rotation -0.5773476025211385 -0.5773526025176962 0.577350602519073 2.09439
+      children [
+        Transform {
+          translation 0 0.025 0
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.4 0.4 0.4
+                roughness 1
+                metalness 0
+              }
+              geometry Box {
+                size 0.15 0.01 0.2
+              }
+            }
+          ]
+        }
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0 0 0
+            roughness 1
+            metalness 0
+          }
+          geometry Cylinder {
+            height 0.05
+            radius 0.05
+          }
+        }
+      ]
+      horizontalResolution 360
+      fieldOfView 6.28
+      numberOfLayers 1
+      maxRange 12
+    }
   ]
+}
+WoodenBox {
+  translation 1.39 0.3 -0.85
+}
+WoodenBox {
+  translation -0.71 0.3 -1.46
+  name "wooden box(1)"
+}
+WoodenBox {
+  translation -1.8 0.3 1.17
+  name "wooden box(2)"
 }

@@ -10,8 +10,8 @@ ros::Publisher cmd_pub;
 void joyCb(Joy msg)
 {
 	Twist cmd;
-	cmd.linear.x = 0.5 * msg.axes[4];
-	cmd.linear.y = 0.5 * msg.axes[3];
+	cmd.linear.x = 1.0 * msg.axes[4];
+	cmd.linear.y = 1.0 * msg.axes[3];
 	cmd.angular.z = 90 * msg.axes[0];
 	cmd_pub.publish(cmd); 
 }

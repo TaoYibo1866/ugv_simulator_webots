@@ -1,6 +1,6 @@
 #include <ros/ros.h>
 #include <nav_msgs/Odometry.h>
-#include <mecanum_simulator/MecanumSensor.h>
+#include <vehicle_simulator/MecanumSensor.h>
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
@@ -8,7 +8,7 @@
 #define b 0.158
 #define r 0.045
 
-using mecanum_simulator::MecanumSensor;
+using vehicle_simulator::MecanumSensor;
 using nav_msgs::Odometry;
 
 ros::Publisher odom_pub;

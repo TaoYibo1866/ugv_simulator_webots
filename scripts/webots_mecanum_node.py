@@ -3,8 +3,9 @@
 import rospy
 from tf.transformations import quaternion_multiply
 from rosgraph_msgs.msg import Clock
+from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
-from mecanum_simulator.msg import MecanumSensor
+from vehicle_simulator.msg import MecanumSensor
 from controller import Robot
 import os
 from math import sin, cos, pi
@@ -50,6 +51,10 @@ inertial_unit.enable(time_step)
 gyro = robot.getDevice('gyro')
 gyro.enable(time_step)
 
+#Lidar
+lidar = robot.getDevice('lidar')
+lidar.enable(time_step)
+
 robot.step(time_step)
 prev_pos1 = wheel1sensor.getValue()
 prev_pos2 = wheel2sensor.getValue()
@@ -62,8 +67,9 @@ r = 0.045
 
 rospy.init_node('webots_mecanum', anonymous=True)
 rospy.Subscriber('/cmd_vel', Twist, command_callback)
-pub = rospy.Publisher('mecanum_sensor', MecanumSensor, queue_size=1)
 clock_pub = rospy.Publisher('/clock', Clock, queue_size=1)
+sensor_pub = rospy.Publisher('mecanum_sensor', MecanumSensor, queue_size=1)
+scan_pub = rospy.Publisher('scan', LaserScan, queue_size=1)
 
 while robot.step(time_step) != -1 and not rospy.is_shutdown():
     clock = Clock()
@@ -82,29 +88,39 @@ while robot.step(time_step) != -1 and not rospy.is_shutdown():
     sensor.vel2 = (pos2 - prev_pos2) * 1000.0 / time_step
     sensor.vel3 = (pos3 - prev_pos3) * 1000.0 / time_step
     sensor.vel4 = (pos4 - prev_pos4) * 1000.0 / time_step
-
     [qx, qy, qz, qw] = quaternion_multiply(qENU2NUE, inertial_unit.getQuaternion())
     sensor.orientation.x = qx
     sensor.orientation.y = qy
     sensor.orientation.z = qz
     sensor.orientation.w = qw
-
     [wx, wy, wz] = gyro.getValues()
     sensor.angular_velocity.x = wx
     sensor.angular_velocity.y = wy
     sensor.angular_velocity.z = wz
-    pub.publish(sensor)
+    sensor_pub.publish(sensor)
+
+    scan = LaserScan()
+    scan.header.stamp = ros_time_now
+    scan.header.frame_id = 'lidar'
+    scan.angle_min = -lidar.getFov() / 2.0
+    scan.angle_max = +lidar.getFov() / 2.0
+    scan.range_min = lidar.getMinRange()
+    scan.range_max = lidar.getMaxRange()
+    scan.angle_increment = lidar.getFov() / lidar.getHorizontalResolution()
+    scan.time_increment = 0
+    scan.scan_time = 0
+    scan.ranges = lidar.getRangeImage()
+    scan_pub.publish(scan)
+
+    cmd_vx = cmd_vel.linear.x
+    cmd_vy = cmd_vel.linear.y
+    cmd_wz = cmd_vel.angular.z * pi / 180
+    wheel1.setVelocity(((cmd_vx + cmd_vy) + cmd_wz * (a+b)) / r)
+    wheel2.setVelocity(((cmd_vx - cmd_vy) - cmd_wz * (a+b)) / r)
+    wheel3.setVelocity(((cmd_vx + cmd_vy) - cmd_wz * (a+b)) / r)
+    wheel4.setVelocity(((cmd_vx - cmd_vy) - cmd_wz * (a+b)) / r)
 
     prev_pos1 = pos1
     prev_pos2 = pos2
     prev_pos3 = pos3
     prev_pos4 = pos4
-
-    cmd_vx = cmd_vel.linear.x
-    cmd_vy = cmd_vel.linear.y
-    cmd_wz = cmd_vel.angular.z * pi / 180
-
-    wheel1.setVelocity(((cmd_vx + cmd_vy) + cmd_wz * (a+b)) / r)
-    wheel2.setVelocity(((cmd_vx - cmd_vy) - cmd_wz * (a+b)) / r)
-    wheel3.setVelocity(((cmd_vx + cmd_vy) - cmd_wz * (a+b)) / r)
-    wheel4.setVelocity(((cmd_vx - cmd_vy) - cmd_wz * (a+b)) / r)

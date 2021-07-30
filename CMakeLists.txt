@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(mecanum_simulator)
+project(vehicle_simulator)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -158,9 +158,9 @@ target_link_libraries(joy_control_node
   ${catkin_LIBRARIES}
 )
 
-add_executable(odometry_node src/odometry_node.cpp)
-add_dependencies(odometry_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(odometry_node
+add_executable(mecanum_odometry_node src/mecanum_odometry_node.cpp)
+add_dependencies(mecanum_odometry_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(mecanum_odometry_node
   ${catkin_LIBRARIES}
 )
 

@@ -2,7 +2,7 @@
 # license: Copyright Cyberbotics Ltd. Licensed for use only with Webots.
 # tags: static
 
-PROTO MecanumPlatform [
+PROTO Mecanum [
   field SFVec3f           translation     0 0.12 0      # Is `Transform.translation`.
   field SFRotation        rotation        1 0 0 -1.5708 # Is `Transform.rotation`.
   field SFString          name            "robot"       # Is `Solid.name`.
