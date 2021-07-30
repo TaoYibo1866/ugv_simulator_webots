@@ -4,32 +4,18 @@ WorldInfo {
   coordinateSystem "NUE"
   contactProperties [
     ContactProperties {
-      material1 "InteriorWheelMat"
       coulombFriction [
-        1.8, 0, 0.2
-      ]
-      frictionRotation -0.9648 0
-      bounce 0
-      forceDependentSlip [
-        10, 0
+        10
       ]
     }
     ContactProperties {
-      material1 "ExteriorWheelMat"
-      coulombFriction [
-        1.8, 0, 0.2
-      ]
-      frictionRotation 0.9648 0
-      bounce 0
-      forceDependentSlip [
-        10, 0
-      ]
+      material2 "FrontWheel"
     }
   ]
 }
 Viewpoint {
-  orientation -0.29926477107992017 -0.9057320622793604 -0.3001500094113939 1.672585527609354
-  position -5.845771735924911 4.388491991457632 -0.09301306870099024
+  orientation -0.5792479615620566 0.7866964997327685 0.21349570565801207 0.8762769816711713
+  position 2.757206680892503 2.3890491687701116 2.831073123626883
   follow "robot"
 }
 TexturedBackground {
@@ -40,7 +26,7 @@ RectangleArena {
   floorSize 5 5
   wallHeight 0.5
 }
-Mecanum {
+Differential {
   controller "<extern>"
   bodySlot [
     InertialUnit {
@@ -48,7 +34,7 @@ Mecanum {
     Gyro {
     }
     Lidar {
-      translation 0 0 0.03
+      translation 0 0 0.065
       rotation -0.5773516025160751 0.5773466025195175 0.5773526025153867 -2.094395307179586
       children [
         Transform {

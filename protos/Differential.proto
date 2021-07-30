@@ -1,0 +1,130 @@
+#VRML_SIM R2021a utf8
+# license: Copyright Cyberbotics Ltd. Licensed for use only with Webots.
+
+PROTO Differential [
+  field SFVec3f           translation     0 0.044 0     # Is `Transform.translation`.
+  field SFRotation        rotation        1 0 0 -1.5708 # Is `Transform.rotation`.
+  field SFString          name            "robot"       # Is `Solid.name`.
+  field SFString          controller      "void"        # Is `Robot.controller`.
+  field MFString          controllerArgs  []            # Is `Robot.controllerArgs`.
+  field SFString          customData      ""            # Is `Robot.customData`.
+  field SFBool            supervisor      FALSE         # Is `Robot.supervisor`.
+  field SFBool            synchronization TRUE          # Is `Robot.synchronization`.
+  field MFNode            bodySlot        []            # Extends the robot with new nodes in the body slot.
+]
+{
+Robot {
+  translation IS translation
+  rotation IS rotation
+  customData IS customData
+  supervisor IS supervisor
+  synchronization IS synchronization
+  name IS name
+  controller IS controller
+  controllerArgs IS controllerArgs
+  model "Differential Platform"
+  description "Differential Platform"
+  children [
+    Group {
+      children IS bodySlot
+    }
+    DEF BODY Transform {
+      rotation 1 0 0 1.5707996938995747
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.2 0.6 0.2
+            transparency 0.2
+            roughness 1
+            metalness 0
+          }
+          geometry Cylinder {
+            height 0.07
+            radius 0.18
+          }
+        }
+      ]
+    }
+    DEF LEFT_WHEEL HingeJoint {
+      jointParameters HingeJointParameters {
+        axis 0 1 0
+        anchor -0.1 0 -0.014
+      }
+      device [
+        PositionSensor {
+          name "wheel1sensor"
+        }
+        RotationalMotor {
+          name "wheel1"
+          maxVelocity 1000
+        }
+      ]
+      endPoint Solid {
+        translation -0.1 0.1 -0.014
+        children [
+          DEF WHEEL Shape {
+            appearance PBRAppearance {
+              roughness 1
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.026
+              radius 0.031
+            }
+          }
+        ]
+        name "left wheel"
+        boundingObject USE WHEEL
+        physics Physics {
+          density -1
+          mass 0.05
+        }
+      }
+    }
+    DEF RIGHT_WHEEL HingeJoint {
+      jointParameters HingeJointParameters {
+        axis 0 1 0
+        anchor -0.1 0 -0.014
+      }
+      device [
+        PositionSensor {
+          name "wheel2sensor"
+        }
+        RotationalMotor {
+          name "wheel2"
+          maxVelocity 1000
+        }
+      ]
+      endPoint Solid {
+        translation -0.1 -0.1 -0.014
+        children [
+          USE WHEEL
+        ]
+        name "right wheel"
+        boundingObject USE WHEEL
+        physics Physics {
+          density -1
+          mass 0.05
+        }
+      }
+    }
+    DEF FRONT_WHEEL Solid {
+      translation 0.1 0 -0.014
+      name "front wheel"
+      contactMaterial "FrontWheel"
+      boundingObject Sphere {
+        radius 0.031
+      }
+      physics Physics {
+        density -1
+        mass 0.05
+      }
+    }
+  ]
+  boundingObject USE BODY
+  physics Physics {
+    density -1
+    mass 1.8
+  }
+}
+}

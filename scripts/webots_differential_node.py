@@ -5,7 +5,7 @@ from tf.transformations import quaternion_multiply
 from rosgraph_msgs.msg import Clock
 from sensor_msgs.msg import LaserScan, Image
 from geometry_msgs.msg import Twist
-from vehicle_simulator.msg import MecanumSensor
+from vehicle_simulator.msg import DifferentialSensor
 from controller import Robot
 from math import sin, cos, pi
 import numpy as np
@@ -22,26 +22,16 @@ time_step = int(robot.getBasicTimeStep())
 # Motor
 wheel1 = robot.getDevice('wheel1')
 wheel2 = robot.getDevice('wheel2')
-wheel3 = robot.getDevice('wheel3')
-wheel4 = robot.getDevice('wheel4')
 wheel1.setPosition(float('inf'))
 wheel2.setPosition(float('inf'))
-wheel3.setPosition(float('inf'))
-wheel4.setPosition(float('inf'))
 wheel1.setVelocity(0)
 wheel2.setVelocity(0)
-wheel3.setVelocity(0)
-wheel4.setVelocity(0)
 
 # Position Sensor
 wheel1sensor = robot.getDevice('wheel1sensor')
 wheel2sensor = robot.getDevice('wheel2sensor')
-wheel3sensor = robot.getDevice('wheel3sensor')
-wheel4sensor = robot.getDevice('wheel4sensor')
 wheel1sensor.enable(time_step)
 wheel2sensor.enable(time_step)
-wheel3sensor.enable(time_step)
-wheel4sensor.enable(time_step)
 
 # IMU
 inertial_unit = robot.getDevice('inertial unit')
@@ -66,17 +56,12 @@ camera.enable(time_step)
 robot.step(time_step)
 prev_pos1 = wheel1sensor.getValue()
 prev_pos2 = wheel2sensor.getValue()
-prev_pos3 = wheel3sensor.getValue()
-prev_pos4 = wheel4sensor.getValue()
 qENU2NUE = [cos(pi / 4), 0, 0, sin(pi / 4)]
-a = 0.228
-b = 0.158
-r = 0.045
 
-rospy.init_node('webots_mecanum', anonymous=True)
+rospy.init_node('webots_differential', anonymous=True)
 rospy.Subscriber('/cmd_vel', Twist, command_callback)
 clock_pub = rospy.Publisher('/clock', Clock, queue_size=1)
-sensor_pub = rospy.Publisher('mecanum_sensor', MecanumSensor, queue_size=1)
+sensor_pub = rospy.Publisher('differential_sensor', DifferentialSensor, queue_size=1)
 scan_pub = rospy.Publisher('scan', LaserScan, queue_size=1)
 depth_pub = rospy.Publisher('depth_image', Image, queue_size=1)
 rgb_pub = rospy.Publisher('rgb_image', Image, queue_size=1)
@@ -89,15 +74,11 @@ while robot.step(time_step) != -1 and not rospy.is_shutdown():
 
     pos1 = wheel1sensor.getValue()
     pos2 = wheel2sensor.getValue()
-    pos3 = wheel3sensor.getValue()
-    pos4 = wheel4sensor.getValue()
 
-    sensor = MecanumSensor()
+    sensor = DifferentialSensor()
     sensor.header.stamp = ros_time_now
     sensor.vel1 = (pos1 - prev_pos1) * 1000.0 / time_step
     sensor.vel2 = (pos2 - prev_pos2) * 1000.0 / time_step
-    sensor.vel3 = (pos3 - prev_pos3) * 1000.0 / time_step
-    sensor.vel4 = (pos4 - prev_pos4) * 1000.0 / time_step
     [qx, qy, qz, qw] = quaternion_multiply(qENU2NUE, inertial_unit.getQuaternion())
     sensor.orientation.x = qx
     sensor.orientation.y = qy
@@ -148,14 +129,12 @@ while robot.step(time_step) != -1 and not rospy.is_shutdown():
     rgb_pub.publish(rgb)
 
     cmd_vx = cmd_vel.linear.x
-    cmd_vy = cmd_vel.linear.y
     cmd_wz = cmd_vel.angular.z * pi / 180
-    wheel1.setVelocity(((cmd_vx + cmd_vy) + cmd_wz * (a+b)) / r)
-    wheel2.setVelocity(((cmd_vx - cmd_vy) - cmd_wz * (a+b)) / r)
-    wheel3.setVelocity(((cmd_vx + cmd_vy) - cmd_wz * (a+b)) / r)
-    wheel4.setVelocity(((cmd_vx - cmd_vy) - cmd_wz * (a+b)) / r)
+
+    cmd_vel1 = (cmd_vx * 2 - cmd_wz * 0.1 * 2) / 2.0 / 0.031
+    cmd_vel2 = (cmd_vx * 2 + cmd_wz * 0.1 * 2) / 2.0 / 0.031
+    wheel1.setVelocity(cmd_vel1)
+    wheel2.setVelocity(cmd_vel2)
 
     prev_pos1 = pos1
     prev_pos2 = pos2
-    prev_pos3 = pos3
-    prev_pos4 = pos4
