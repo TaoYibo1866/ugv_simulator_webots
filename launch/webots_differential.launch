@@ -13,8 +13,8 @@
   <node name="webots_differential" pkg="vehicle_simulator" type="webots_differential_node.py" output="screen" required="true"/>
   <node name="joy" pkg="joy" type="joy_node" output="screen"/>
   <node name="joy_control" pkg="vehicle_simulator" type="joy_control_node" output="screen"/>
-  <!-- <node name="odometry" pkg="vehicle_simulator" type="mecanum_odometry_node" output="screen"/>
+  <node name="odometry" pkg="vehicle_simulator" type="differential_odometry_node" output="screen"/>
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find vehicle_simulator)/rviz/default.rviz"/>
   <node pkg="tf2_ros" type="static_transform_publisher" name="static_broadcaster1" args="0 0 0 0 0 0 base_link lidar" />
-  <node pkg="tf2_ros" type="static_transform_publisher" name="static_broadcaster2" args="0 0 0 0 0 0 base_link depth_camera" /> -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="static_broadcaster2" args="0 0 0 0 0 0 base_link depth_camera" />
 </launch>

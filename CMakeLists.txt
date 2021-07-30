@@ -165,6 +165,12 @@ target_link_libraries(mecanum_odometry_node
   ${catkin_LIBRARIES}
 )
 
+add_executable(differential_odometry_node src/differential_odometry_node.cpp)
+add_dependencies(differential_odometry_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(differential_odometry_node
+  ${catkin_LIBRARIES}
+)
+
 #############
 ## Install ##
 #############

@@ -57,6 +57,8 @@ robot.step(time_step)
 prev_pos1 = wheel1sensor.getValue()
 prev_pos2 = wheel2sensor.getValue()
 qENU2NUE = [cos(pi / 4), 0, 0, sin(pi / 4)]
+l = 0.1
+r = 0.031
 
 rospy.init_node('webots_differential', anonymous=True)
 rospy.Subscriber('/cmd_vel', Twist, command_callback)
@@ -131,10 +133,8 @@ while robot.step(time_step) != -1 and not rospy.is_shutdown():
     cmd_vx = cmd_vel.linear.x
     cmd_wz = cmd_vel.angular.z * pi / 180
 
-    cmd_vel1 = (cmd_vx * 2 - cmd_wz * 0.1 * 2) / 2.0 / 0.031
-    cmd_vel2 = (cmd_vx * 2 + cmd_wz * 0.1 * 2) / 2.0 / 0.031
-    wheel1.setVelocity(cmd_vel1)
-    wheel2.setVelocity(cmd_vel2)
+    wheel1.setVelocity((cmd_vx - cmd_wz * l) / r)
+    wheel2.setVelocity((cmd_vx + cmd_wz * l) / r)
 
     prev_pos1 = pos1
     prev_pos2 = pos2
