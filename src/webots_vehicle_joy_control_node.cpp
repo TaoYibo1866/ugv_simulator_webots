@@ -9,9 +9,10 @@ ros::Publisher cmd_pub;
 
 void joyCb(Joy msg)
 {
+	// F710 Direct Input Mode
 	Twist cmd;
-	cmd.linear.x = 1.0 * msg.axes[4];
-	cmd.linear.y = 1.0 * msg.axes[3];
+	cmd.linear.x = 1.0 * msg.axes[3];
+	cmd.linear.y = 1.0 * msg.axes[2];
 	cmd.angular.z = 90 * msg.axes[0];
 	cmd_pub.publish(cmd); 
 }
