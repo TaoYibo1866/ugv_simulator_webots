@@ -143,7 +143,7 @@ while robot.step(time_step) != -1 and not rospy.is_shutdown():
     rgb.height = camera.getHeight()
     rgb.encoding = 'bgra8'
     rgb.is_bigendian = False
-    rgb.step = 4 * range_finder.getWidth()
+    rgb.step = 4 * camera.getWidth()
     rgb.data = camera.getImage()
     rgb_pub.publish(rgb)
 
