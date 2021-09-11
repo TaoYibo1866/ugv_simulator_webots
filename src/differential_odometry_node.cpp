@@ -41,7 +41,7 @@ void sensorCb(DifferentialSensor msg)
   pos_y += ((vy_ENU + prev_vy_ENU) / 2) * dt;
 
   Odometry odom;
-  odom.header.stamp = ros::Time::now();
+  odom.header.stamp = msg.header.stamp;
   odom.header.frame_id = "odom";
   odom.child_frame_id = "base_link";
   odom.pose.pose.position.x = pos_x;
@@ -56,7 +56,7 @@ void sensorCb(DifferentialSensor msg)
 
   static tf2_ros::TransformBroadcaster br;
   geometry_msgs::TransformStamped transformStamped;
-  transformStamped.header.stamp = ros::Time::now();
+  transformStamped.header.stamp = msg.header.stamp;
   transformStamped.header.frame_id = "odom";
   transformStamped.child_frame_id = "base_link";
   transformStamped.transform.translation.x = pos_x;
